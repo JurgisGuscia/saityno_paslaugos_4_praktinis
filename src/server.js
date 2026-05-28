@@ -14,14 +14,19 @@ const EventFilter = new EventFilterService(EventRepo);
 
 app.listen(PORT, async () => {
   console.log(`Server running on http://localhost:${PORT}`);
+  runScraping();
+  setInterval(() => {
+    runScraping();
+  }, ScrapeInterval);
+});
 
+async function runScraping() {
   const eventUrlList = await EventScraper.scrapeEvents('https://www.kaveikti.lt');
   const newEvents = await EventFilter.filterNewEvents(eventUrlList);
   console.log('================================');
   console.log('New events found:');
   console.log(newEvents);
   newEvents.forEach(async (url) => {
-    //scrape full events should return Event DTO
     const eventDetails = await EventScraper.scrapeFullEventDetails(url);
     if (eventDetails) {
       await EventRepo.save(eventDetails);
@@ -29,7 +34,4 @@ app.listen(PORT, async () => {
   });
   console.log('New event scraping finished.');
   console.log('================================');
-  setInterval(() => {
-    scrapeEvents();
-  }, ScrapeInterval);
-});
+}

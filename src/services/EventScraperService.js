@@ -38,7 +38,12 @@ export default class ScraperService {
         .join('\n\n');
       const location = parsedHtml('meta[itemprop="addressLocality"]').attr('content');
       const date = new Date(parsedHtml('meta[itemprop="startDate"]').attr('content'));
-      const price = parsedHtml('meta[itemprop="price"]').attr('content') || 0;
+      const price =
+        parsedHtml('meta[itemprop="Price"]').attr('content') ||
+        parsedHtml('meta[itemprop="lowPrice"]').attr('content') ||
+        parsedHtml('meta[itemprop="highPrice"]').attr('content') ||
+        0;
+
       const duration = (endDate - date) / 1000 / 60;
       const type = parsedHtml('.details-wrap a').attr('title').split(' ')[0];
       const event = new Event(url, title, content, location, date, price, duration, type);
