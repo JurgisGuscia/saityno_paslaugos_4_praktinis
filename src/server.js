@@ -3,6 +3,8 @@ import app from './app.js';
 import ScraperService from './services/EventScraperService.js';
 import EventFilterService from './services/EventFilterService.js';
 import EventRepository from './repositories/EventRepository.js';
+import GeocodingService from './services/GeocodingService.js';
+import GeolocationRepository from './repositories/GeolocationRepository.js';
 import db from './config/db.js';
 dotenv.config();
 
@@ -11,6 +13,8 @@ const ScrapeInterval = 600000; // 10 minutes
 const EventScraper = new ScraperService();
 const EventRepo = new EventRepository();
 const EventFilter = new EventFilterService(EventRepo);
+const geolocationRepository = new GeolocationRepository();
+const Geocoder = new GeocodingService(geolocationRepository);
 
 app.listen(PORT, async () => {
   console.log(`Server running on http://localhost:${PORT}`);
@@ -26,12 +30,13 @@ async function runScraping() {
   console.log('================================');
   console.log('New events found:');
   console.log(newEvents);
-  newEvents.forEach(async (url) => {
+  for (const url of newEvents) {
     const eventDetails = await EventScraper.scrapeFullEventDetails(url);
     if (eventDetails) {
       await EventRepo.save(eventDetails);
+      await Geocoder.geocodeLocation(eventDetails.location);
     }
-  });
+  }
   console.log('New event scraping finished.');
   console.log('================================');
 }
