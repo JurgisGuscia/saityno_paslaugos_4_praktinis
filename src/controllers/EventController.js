@@ -52,7 +52,7 @@ export default class EventController {
           data: event,
         });
       }
-      res.json({
+      res.status(200).json({
         _links: {
           allEvents: new HateoasLink('/events', 'GET', 'Get all events'),
           filteredEvents: {
@@ -74,8 +74,14 @@ export default class EventController {
   }
 
   async getEventById(req, res) {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id <= 0) {
+      return res.status(400).json({
+        error: 'Invalid event id',
+      });
+    }
     try {
-      const event = await this.#eventRepository.findById(req.params.id);
+      const event = await this.#eventRepository.findById(id);
 
       if (!event) {
         return res.status(404).json({
@@ -105,7 +111,7 @@ export default class EventController {
         event.date,
       );
 
-      res.json({
+      res.status(200).json({
         _links: {
           allEvents: new HateoasLink('/events', 'GET', 'Get all events'),
           filteredEvents: {
@@ -130,8 +136,14 @@ export default class EventController {
   }
 
   async likeEvent(req, res) {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id <= 0) {
+      return res.status(400).json({
+        error: 'Invalid event id',
+      });
+    }
     try {
-      const updated = await this.#eventRepository.increaseLikesById(req.params.id);
+      const updated = await this.#eventRepository.increaseLikesById(id);
 
       if (!updated) {
         return res.status(404).json({
@@ -139,12 +151,11 @@ export default class EventController {
         });
       }
 
-      res.json({
+      res.status(200).json({
         message: 'Event liked',
       });
     } catch (error) {
       console.error('Error liking event:', error);
-
       res.status(500).json({
         error: 'Failed to like event',
       });
