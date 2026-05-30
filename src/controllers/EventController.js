@@ -1,11 +1,20 @@
 import EventRepository from '../repositories/EventRepository.js';
 import HateoasLink from '../models/HateoasLink.js';
+import WeatherForecastService from '../services/WeatherForcastService.js';
+import GeolocationRepository from '../repositories/GeolocationRepository.js';
+import WeatherForecastFormatterService from '../services/WeatherForcecastFormatterService.js';
 
 export default class EventController {
   #eventRepository;
+  #weatherForecastService;
+  #GeolocationRepository;
+  #weatherForecastFormatterService;
 
   constructor() {
     this.#eventRepository = new EventRepository();
+    this.#weatherForecastService = new WeatherForecastService();
+    this.#GeolocationRepository = new GeolocationRepository();
+    this.#weatherForecastFormatterService = new WeatherForecastFormatterService();
   }
 
   async getEvents(req, res) {
@@ -83,6 +92,19 @@ export default class EventController {
       for (const type of types) {
         typeLinkList.push('/events?type=' + type);
       }
+      //get event location coordinates
+      const eventLocation = await this.#GeolocationRepository.findByLocation(event.location);
+      //call weather forecast on give coordinates
+      const weatherForecast = await this.#weatherForecastService.getWeatherForecast(
+        eventLocation.latitude,
+        eventLocation.longitude,
+      );
+      //format weather forcast for output
+      const formattedWeatherForecast = this.#weatherForecastFormatterService.format(
+        weatherForecast,
+        event.date,
+      );
+
       res.json({
         _links: {
           allEvents: new HateoasLink('/events', 'GET', 'Get all events'),
@@ -96,6 +118,7 @@ export default class EventController {
           like: new HateoasLink('/events/' + event.id + '/like', 'PATCH', 'Like this event'),
         },
         data: event,
+        weatherForecast: formattedWeatherForecast,
       });
     } catch (error) {
       console.error('Error fetching event:', error);
