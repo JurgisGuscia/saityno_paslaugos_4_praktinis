@@ -1,0 +1,85 @@
+  
+openapi: 3.0.0
+
+info:
+  title: Lithuanian Events API
+  version: 1.0.0
+  description: RESTful API for scraped Lithuanian events with location-based weather forecast data.
+
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+
+paths:
+  /events:
+    get:
+      summary: Get events
+      description: Returns upcoming events. Results can be filtered by location or type.
+      parameters:
+        - name: location
+          in: query
+          required: false
+          description: Filter events by location.
+          schema:
+            type: string
+          example: Vilnius
+
+        - name: type
+          in: query
+          required: false
+          description: Filter events by event type.
+          schema:
+            type: string
+          example: Koncertai
+
+      responses:
+        "200":
+          description: Events returned successfully.
+        "500":
+          description: Failed to fetch events.
+
+  /events/{id}:
+    get:
+      summary: Get event by ID
+      description: Returns one event with HATEOAS links and weather forecast data.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Event ID.
+          schema:
+            type: integer
+          example: 1
+
+      responses:
+        "200":
+          description: Event returned successfully.
+        "400":
+          description: Invalid event ID.
+        "404":
+          description: Event not found.
+        "500":
+          description: Failed to fetch event.
+
+  /events/{id}/like:
+    patch:
+      summary: Like event
+      description: Increases the like count of one event by 1.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Event ID.
+          schema:
+            type: integer
+          example: 1
+
+      responses:
+        "200":
+          description: Event liked successfully.
+        "400":
+          description: Invalid event ID.
+        "404":
+          description: Event not found.
+        "500":
+          description: Failed to like event.
