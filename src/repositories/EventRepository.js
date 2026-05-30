@@ -23,7 +23,8 @@ export default class EventRepository {
     const sql = `
     SELECT *
     FROM events
-    WHERE location = ?
+    WHERE date >= CURDATE()
+    AND location = ?
     ORDER BY date ASC
   `;
 
@@ -53,7 +54,8 @@ export default class EventRepository {
     const sql = `
     SELECT *
     FROM events
-    WHERE type = ?
+    WHERE date >= CURDATE()
+    AND type = ?
     ORDER BY date ASC
   `;
 
@@ -66,6 +68,7 @@ export default class EventRepository {
     const sql = `
       SELECT *
       FROM events
+      WHERE date >= CURDATE()
       ORDER BY date DESC
     `;
 
@@ -77,7 +80,7 @@ export default class EventRepository {
   async save(event) {
     const sql = `
       INSERT INTO events (
-      url,
+        url,
         title,
         content,
         location,
@@ -87,15 +90,7 @@ export default class EventRepository {
       )
       VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
-    console.log({
-      url: event.url,
-      title: event.title,
-      content: event.content,
-      location: event.location,
-      date: event.date,
-      price: event.price,
-      type: event.type,
-    });
+
     const [result] = await db.execute(sql, [
       event.url,
       event.title,
@@ -107,5 +102,43 @@ export default class EventRepository {
     ]);
 
     return result.insertId;
+  }
+
+  async increaseLikesById(id) {
+    const sql = `
+    UPDATE events
+    SET likes = likes + 1
+    WHERE id = ?
+  `;
+    const [result] = await db.execute(sql, [id]);
+    return result.affectedRows > 0;
+  }
+
+  async findUniqueLocations() {
+    const sql = `
+    SELECT DISTINCT location
+    FROM events
+    WHERE location IS NOT NULL
+      AND date >= CURDATE()
+    ORDER BY location ASC
+  `;
+
+    const [rows] = await db.execute(sql);
+
+    return rows.map((row) => row.location);
+  }
+
+  async findUniqueTypes() {
+    const sql = `
+    SELECT DISTINCT type
+    FROM events
+    WHERE type IS NOT NULL
+     AND date >= CURDATE()
+    ORDER BY type ASC
+  `;
+
+    const [rows] = await db.execute(sql);
+
+    return rows.map((row) => row.type);
   }
 }

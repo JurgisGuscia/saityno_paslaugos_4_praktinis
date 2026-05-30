@@ -9,7 +9,7 @@ export default class Event {
   #type;
   #likes;
 
-  constructor(id = null, url, title, content, location, date, price, type) {
+  constructor(id = null, url, title, content, location, date, price, type, likes) {
     this.#id = id;
     this.#url = url;
     this.#title = title;
@@ -18,7 +18,7 @@ export default class Event {
     this.#date = date;
     this.#price = price;
     this.#type = type;
-    this.#likes = 0;
+    this.#likes = likes || 0;
   }
 
   get id() {
@@ -87,6 +87,7 @@ export default class Event {
       row.date,
       row.price,
       row.type,
+      row.likes,
     );
   }
 
@@ -102,5 +103,15 @@ export default class Event {
       type: this.#type,
       likes: this.#likes,
     };
+  }
+
+  async increaseLikesById(id) {
+    const sql = `
+    UPDATE events
+    SET likes = likes + 1
+    WHERE id = ?
+  `;
+    const [result] = await db.execute(sql, [id]);
+    return result.affectedRows > 0;
   }
 }
