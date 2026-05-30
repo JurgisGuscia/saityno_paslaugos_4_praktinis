@@ -19,11 +19,54 @@ export default class EventRepository {
     return Event.fromDatabaseRow(rows[0]);
   }
 
+  async findByLocation(location) {
+    const sql = `
+    SELECT *
+    FROM events
+    WHERE location = ?
+    ORDER BY date ASC
+  `;
+
+    const [rows] = await db.execute(sql, [location]);
+
+    return rows.map((row) => Event.fromDatabaseRow(row));
+  }
+
+  async findById(id) {
+    const sql = `
+    SELECT *
+    FROM events
+    WHERE id = ?
+    LIMIT 1
+  `;
+
+    const [rows] = await db.execute(sql, [id]);
+
+    if (rows.length === 0) {
+      return null;
+    }
+
+    return Event.fromDatabaseRow(rows[0]);
+  }
+
+  async findByType(type) {
+    const sql = `
+    SELECT *
+    FROM events
+    WHERE type = ?
+    ORDER BY date ASC
+  `;
+
+    const [rows] = await db.execute(sql, [type]);
+
+    return rows.map((row) => Event.fromDatabaseRow(row));
+  }
+
   async findAll() {
     const sql = `
       SELECT *
       FROM events
-      ORDER BY date ASC, time ASC
+      ORDER BY date DESC
     `;
 
     const [rows] = await db.execute(sql);
@@ -40,12 +83,19 @@ export default class EventRepository {
         location,
         date,
         price,
-        duration,
         type
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
-
+    console.log({
+      url: event.url,
+      title: event.title,
+      content: event.content,
+      location: event.location,
+      date: event.date,
+      price: event.price,
+      type: event.type,
+    });
     const [result] = await db.execute(sql, [
       event.url,
       event.title,
@@ -53,7 +103,6 @@ export default class EventRepository {
       event.location,
       event.date,
       event.price,
-      event.duration,
       event.type,
     ]);
 
