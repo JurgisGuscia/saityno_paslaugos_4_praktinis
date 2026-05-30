@@ -12,7 +12,7 @@ export default class ScraperService {
       return [];
     }
   }
-
+  //return only urls of scraped events
   extractEventLinks(parsedHtml) {
     const events = [];
     parsedHtml('.block.event-block').each((index, element) => {
@@ -23,7 +23,7 @@ export default class ScraperService {
     });
     return events;
   }
-
+  //get full data from event page
   async scrapeFullEventDetails(url) {
     try {
       const response = await fetch(url);

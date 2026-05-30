@@ -23,7 +23,7 @@ app.listen(PORT, async () => {
     runScraping();
   }, ScrapeInterval);
 });
-
+//running loop, scraping kaveikti.lt every 10 minutes
 async function runScraping() {
   const eventUrlList = await EventScraper.scrapeEvents('https://www.kaveikti.lt');
   const newEvents = await EventFilter.filterNewEvents(eventUrlList);

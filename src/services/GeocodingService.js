@@ -4,7 +4,7 @@ export default class GeocodingService {
   constructor(geolocationRepository) {
     this.#geolocationRepository = geolocationRepository;
   }
-
+  //get latitude and longitude of given location from API
   async geocodeLocation(location) {
     const existingGeolocation = await this.#geolocationRepository.findByLocation(location);
     if (existingGeolocation) {

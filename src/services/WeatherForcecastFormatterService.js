@@ -20,7 +20,7 @@ export default class WeatherForecastFormatterService {
     const clouds = [];
     const windSpeeds = [];
     const windDirections = [];
-
+    //if event is later than 16 days, asign last date for weather forecast
     for (
       let i = weatherForecast.hourly.time.length - 24;
       i < weatherForecast.hourly.time.length;
@@ -35,7 +35,7 @@ export default class WeatherForecastFormatterService {
       windSpeeds.push(weatherForecast.hourly.wind_speed_10m[i]);
       windDirections.push(weatherForecast.hourly.wind_direction_10m[i]);
     }
-
+    //returned date matches event date, reasign value with correct ones
     for (let i = 0; i < weatherForecast.hourly.time.length; i++) {
       if (weatherForecast.hourly.time[i].slice(0, 10) === eventDateString.slice(0, 10)) {
         times.push(weatherForecast.hourly.time[i]);
@@ -48,6 +48,7 @@ export default class WeatherForecastFormatterService {
         windDirections.push(weatherForecast.hourly.wind_direction_10m[i]);
       }
     }
+    //create a string for each hour data output
     const formatedWeatherForecastData = [];
     for (let i = 0; i < times.length; i++) {
       formatedWeatherForecastData.push(
@@ -70,6 +71,7 @@ export default class WeatherForecastFormatterService {
           '°',
       );
     }
+    //create output object
     const formatedWeatherForecast = {
       latitude: weatherForecast.latitude,
       longitude: weatherForecast.longitude,

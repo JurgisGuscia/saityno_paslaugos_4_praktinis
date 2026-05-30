@@ -1,4 +1,5 @@
 export default class WeatherForecastService {
+  //fetch a weather forecast for given latitude and longitude from API
   async getWeatherForecast(latitude, longitude) {
     try {
       const response = await fetch(

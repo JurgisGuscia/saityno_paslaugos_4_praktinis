@@ -30,18 +30,19 @@ export default class EventController {
       } else {
         events = await this.#eventRepository.findAll();
       }
+      //create a hateoas list of locations
       const locations = await this.#eventRepository.findUniqueLocations();
       const locationLinkList = [];
       for (const location of locations) {
         locationLinkList.push('/events?location=' + location);
       }
-
+      //create a hateoas list of types
       const types = await this.#eventRepository.findUniqueTypes();
       const typeLinkList = [];
       for (const type of types) {
         typeLinkList.push('/events?type=' + type);
       }
-
+      //format events for output
       const formatedEvents = [];
       for (const event of events) {
         formatedEvents.push({
@@ -88,11 +89,13 @@ export default class EventController {
           error: 'Event not found',
         });
       }
+      //create a hateoas list of locations
       const locations = await this.#eventRepository.findUniqueLocations();
       const locationLinkList = [];
       for (const location of locations) {
         locationLinkList.push('/events?location=' + location);
       }
+      //create a hateoas list of types
       const types = await this.#eventRepository.findUniqueTypes();
       const typeLinkList = [];
       for (const type of types) {
@@ -100,7 +103,7 @@ export default class EventController {
       }
       //get event location coordinates
       const eventLocation = await this.#GeolocationRepository.findByLocation(event.location);
-      //call weather forecast on give coordinates
+      //call weather forecast on given coordinates
       const weatherForecast = await this.#weatherForecastService.getWeatherForecast(
         eventLocation.latitude,
         eventLocation.longitude,
