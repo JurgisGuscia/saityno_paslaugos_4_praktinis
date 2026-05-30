@@ -44,9 +44,8 @@ export default class ScraperService {
         parsedHtml('meta[itemprop="highPrice"]').attr('content') ||
         0;
 
-      const duration = (endDate - date) / 1000 / 60;
       const type = parsedHtml('.details-wrap a').attr('title').split(' ')[0];
-      const event = new Event(url, title, content, location, date, price, duration, type);
+      const event = new Event(null, url, title, content, location, date, price, type);
       return event;
     } catch (error) {
       console.error('Error fetching event details:', error);

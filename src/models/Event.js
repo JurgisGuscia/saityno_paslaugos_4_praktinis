@@ -6,18 +6,17 @@ export default class Event {
   #location;
   #date;
   #price;
-  #duration;
   #type;
   #likes;
 
-  constructor(url, title, content, location, date, price, duration, type) {
+  constructor(id = null, url, title, content, location, date, price, type) {
+    this.#id = id;
     this.#url = url;
     this.#title = title;
     this.#content = content;
     this.#location = location;
     this.#date = date;
     this.#price = price;
-    this.#duration = duration;
     this.#type = type;
     this.#likes = 0;
   }
@@ -42,9 +41,6 @@ export default class Event {
   }
   get price() {
     return this.#price;
-  }
-  get duration() {
-    return this.#duration;
   }
   get type() {
     return this.#type;
@@ -74,9 +70,6 @@ export default class Event {
   set price(price) {
     this.#price = price;
   }
-  set duration(duration) {
-    this.#duration = duration;
-  }
   set type(type) {
     this.#type = type;
   }
@@ -86,14 +79,28 @@ export default class Event {
 
   static fromDatabaseRow(row) {
     return new Event(
+      row.id,
       row.url,
       row.title,
       row.content,
       row.location,
       row.date,
       row.price,
-      row.duration,
       row.type,
     );
+  }
+
+  toJSON() {
+    return {
+      id: this.#id,
+      url: this.#url,
+      title: this.#title,
+      content: this.#content,
+      location: this.#location,
+      date: this.#date,
+      price: this.#price,
+      type: this.#type,
+      likes: this.#likes,
+    };
   }
 }
