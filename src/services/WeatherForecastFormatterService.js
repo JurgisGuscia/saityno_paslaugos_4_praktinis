@@ -1,4 +1,18 @@
+/**
+ * Service responsible for formatting raw weather forecast data.
+ * It converts the Open-Meteo API response into a smaller object that is easier
+ * to return together with event details.
+ */
 export default class WeatherForecastFormatterService {
+  /**
+   * Formats weather forecast data for the event date.
+   * If weather data is missing, an error object is returned.
+   * If the event date is outside the forecast range, the latest available forecast day is used.
+   *
+   * @param {object|null} weatherForecast Raw weather forecast data from Open-Meteo API.
+   * @param {Date} eventDate Event start date.
+   * @returns {object} Formatted weather forecast data or an error object.
+   */
   format(weatherForecast, eventDate) {
     if (!weatherForecast) {
       return {
@@ -20,7 +34,8 @@ export default class WeatherForecastFormatterService {
     const clouds = [];
     const windSpeeds = [];
     const windDirections = [];
-    //if event is later than 16 days, asign last date for weather forecast
+    // Default forecast is the last available day from the API.
+    // This is used when the event date is outside the forecast range.
     for (
       let i = weatherForecast.hourly.time.length - 24;
       i < weatherForecast.hourly.time.length;
@@ -48,7 +63,7 @@ export default class WeatherForecastFormatterService {
         windDirections.push(weatherForecast.hourly.wind_direction_10m[i]);
       }
     }
-    //create a string for each hour data output
+    // Convert hourly weather values into readable strings for the API response.
     const formatedWeatherForecastData = [];
     for (let i = 0; i < times.length; i++) {
       formatedWeatherForecastData.push(

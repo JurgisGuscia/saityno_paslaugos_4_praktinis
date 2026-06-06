@@ -1,10 +1,27 @@
 import Geolocation from '../models/Geolocation.js';
+/**
+ * Service responsible for converting location names into coordinates.
+ * It first checks the local database cache and only calls the external API
+ * if coordinates for the location are not already saved.
+ */
 export default class GeocodingService {
   #geolocationRepository;
+  /**
+   * Creates the geocoding service.
+   *
+   * @param {GeolocationRepository} geolocationRepository Repository used to read and save geolocations.
+   */
   constructor(geolocationRepository) {
     this.#geolocationRepository = geolocationRepository;
   }
-  //get latitude and longitude of given location from API
+  /**
+   * Gets latitude and longitude for a given location.
+   * Existing coordinates are reused from the database. New coordinates are fetched
+   * from the Positionstack API and then saved for future requests.
+   *
+   * @param {string} location Location name.
+   * @returns {Promise<Geolocation|null>} Geolocation object if found, otherwise null.
+   */
   async geocodeLocation(location) {
     const existingGeolocation = await this.#geolocationRepository.findByLocation(location);
     if (existingGeolocation) {

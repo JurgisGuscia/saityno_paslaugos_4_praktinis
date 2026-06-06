@@ -1,5 +1,14 @@
+/**
+ * Service responsible for fetching weather forecast data from the Open-Meteo API.
+ */
 export default class WeatherForecastService {
-  //fetch a weather forecast for given latitude and longitude from API
+  /**
+   * Fetches hourly weather forecast data for given coordinates.
+   *
+   * @param {number} latitude Location latitude.
+   * @param {number} longitude Location longitude.
+   * @returns {Promise<object|null>} Raw weather forecast data, or null if the request fails.
+   */
   async getWeatherForecast(latitude, longitude) {
     try {
       const response = await fetch(

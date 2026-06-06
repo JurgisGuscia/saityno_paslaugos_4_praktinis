@@ -1,5 +1,5 @@
 import { jest } from '@jest/globals';
-import WeatherForecastService from '../../src/services/WeatherForcastService.js';
+import WeatherForecastService from '../../src/services/WeatherForecastService.js';
 
 describe('WeatherForecastService', () => {
   let service;

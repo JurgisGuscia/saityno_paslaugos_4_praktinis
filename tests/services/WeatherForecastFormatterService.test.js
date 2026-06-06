@@ -1,4 +1,4 @@
-import WeatherForecastFormatterService from '../../src/services/WeatherForcecastFormatterService.js';
+import WeatherForecastFormatterService from '../../src/services/WeatherForecastFormatterService.js';
 
 describe('WeatherForecastFormatterService', () => {
   let service;

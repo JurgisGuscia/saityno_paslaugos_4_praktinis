@@ -29,13 +29,13 @@ jest.unstable_mockModule('../../src/repositories/GeolocationRepository.js', () =
   })),
 }));
 
-jest.unstable_mockModule('../../src/services/WeatherForcastService.js', () => ({
+jest.unstable_mockModule('../../src/services/WeatherForecastService.js', () => ({
   default: jest.fn().mockImplementation(() => ({
     getWeatherForecast: mockGetWeatherForecast,
   })),
 }));
 
-jest.unstable_mockModule('../../src/services/WeatherForcecastFormatterService.js', () => ({
+jest.unstable_mockModule('../../src/services/WeatherForecastFormatterService.js', () => ({
   default: jest.fn().mockImplementation(() => ({
     format: mockFormatWeather,
   })),
@@ -339,9 +339,15 @@ describe('EventController', () => {
 
     expect(mockIncreaseLikesById).toHaveBeenCalledWith(1);
     expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith({
-      message: 'Event liked',
-    });
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: 'Event liked',
+        _links: expect.objectContaining({
+          self: expect.any(Object),
+          allEvents: expect.any(Object),
+        }),
+      }),
+    );
   });
 
   test('likeEvent returns status 500 when repository throws error', async () => {

@@ -1,6 +1,16 @@
 import * as cheerio from 'cheerio';
 import Event from '../models/Event.js';
+/**
+ * Service responsible for scraping event data from the external events website.
+ * It extracts event links from the main page and full event details from each event page.
+ */
 export default class ScraperService {
+  /**
+   * Scrapes the main events page and returns event URLs.
+   *
+   * @param {string} url Website URL to scrape.
+   * @returns {Promise<string[]>} List of scraped event URLs.
+   */
   async scrapeEvents(url) {
     try {
       const response = await fetch(url);
@@ -12,7 +22,12 @@ export default class ScraperService {
       return [];
     }
   }
-  //return only urls of scraped events
+  /**
+   * Extracts event links from parsed HTML.
+   *
+   * @param {Function} parsedHtml Cheerio parser loaded with HTML content.
+   * @returns {string[]} List of full event URLs.
+   */
   extractEventLinks(parsedHtml) {
     const events = [];
     parsedHtml('.block.event-block').each((index, element) => {
@@ -23,7 +38,12 @@ export default class ScraperService {
     });
     return events;
   }
-  //get full data from event page
+  /**
+   * Scrapes a single event page and creates an Event model from the extracted data.
+   *
+   * @param {string} url Event page URL.
+   * @returns {Promise<Event|null>} Event object if scraping succeeds, otherwise null.
+   */
   async scrapeFullEventDetails(url) {
     try {
       const response = await fetch(url);

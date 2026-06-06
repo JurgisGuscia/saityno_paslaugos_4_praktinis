@@ -35,6 +35,12 @@ paths:
       responses:
         "200":
           description: Events returned successfully.
+          headers:
+            Cache-Control:
+              description: Response can be cached for 1 hour.
+              schema:
+                type: string
+                example: public, max-age=3600
         "500":
           description: Failed to fetch events.
 
@@ -54,6 +60,12 @@ paths:
       responses:
         "200":
           description: Event returned successfully.
+          headers:
+            Cache-Control:
+              description: Response can be cached for 24 hours.
+              schema:
+                type: string
+                example: public, max-age=86400
         "400":
           description: Invalid event ID.
         "404":
@@ -77,6 +89,12 @@ paths:
       responses:
         "200":
           description: Event liked successfully.
+          headers:
+            Cache-Control:
+              description: Like response is not cached because it changes server state.
+              schema:
+                type: string
+                example: no-store
         "400":
           description: Invalid event ID.
         "404":
