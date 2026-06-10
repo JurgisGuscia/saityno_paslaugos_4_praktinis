@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "acceptance": "cucumber-js"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +22,7 @@
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
+    "@cucumber/cucumber": "^13.0.0",
     "jest": "^30.4.2",
     "nodemon": "^3.1.14"
   }

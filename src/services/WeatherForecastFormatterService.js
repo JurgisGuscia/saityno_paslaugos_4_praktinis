@@ -34,23 +34,7 @@ export default class WeatherForecastFormatterService {
     const clouds = [];
     const windSpeeds = [];
     const windDirections = [];
-    // Default forecast is the last available day from the API.
-    // This is used when the event date is outside the forecast range.
-    for (
-      let i = weatherForecast.hourly.time.length - 24;
-      i < weatherForecast.hourly.time.length;
-      i++
-    ) {
-      times.push(weatherForecast.hourly.time[i]);
-      temperatures.push(weatherForecast.hourly.temperature_2m[i]);
-      humidities.push(weatherForecast.hourly.relative_humidity_2m[i]);
-      apparentTemperatures.push(weatherForecast.hourly.apparent_temperature[i]);
-      rain.push(weatherForecast.hourly.rain[i]);
-      clouds.push(weatherForecast.hourly.cloud_cover[i]);
-      windSpeeds.push(weatherForecast.hourly.wind_speed_10m[i]);
-      windDirections.push(weatherForecast.hourly.wind_direction_10m[i]);
-    }
-    //returned date matches event date, reasign value with correct ones
+    // returned date matches event date, fill arrays with the event date weather data
     for (let i = 0; i < weatherForecast.hourly.time.length; i++) {
       if (weatherForecast.hourly.time[i].slice(0, 10) === eventDateString.slice(0, 10)) {
         times.push(weatherForecast.hourly.time[i]);
@@ -63,7 +47,24 @@ export default class WeatherForecastFormatterService {
         windDirections.push(weatherForecast.hourly.wind_direction_10m[i]);
       }
     }
-    // Convert hourly weather values into readable strings for the API response.
+    // if no weather data for the event date is found, use the latest available day from the API.
+    if (times.length === 0) {
+      for (
+        let i = weatherForecast.hourly.time.length - 24;
+        i < weatherForecast.hourly.time.length;
+        i++
+      ) {
+        times.push(weatherForecast.hourly.time[i]);
+        temperatures.push(weatherForecast.hourly.temperature_2m[i]);
+        humidities.push(weatherForecast.hourly.relative_humidity_2m[i]);
+        apparentTemperatures.push(weatherForecast.hourly.apparent_temperature[i]);
+        rain.push(weatherForecast.hourly.rain[i]);
+        clouds.push(weatherForecast.hourly.cloud_cover[i]);
+        windSpeeds.push(weatherForecast.hourly.wind_speed_10m[i]);
+        windDirections.push(weatherForecast.hourly.wind_direction_10m[i]);
+      }
+    }
+    // convert hourly weather values into readable strings for the API response.
     const formatedWeatherForecastData = [];
     for (let i = 0; i < times.length; i++) {
       formatedWeatherForecastData.push(
@@ -86,7 +87,7 @@ export default class WeatherForecastFormatterService {
           '°',
       );
     }
-    //create output object
+    // create output object
     const formatedWeatherForecast = {
       latitude: weatherForecast.latitude,
       longitude: weatherForecast.longitude,
